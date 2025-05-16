@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unpaid Telephone Bills Finder</title>
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #4cc9f0;
+      --danger-color: #f72585;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark-color);
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 30px;
+      overflow: hidden;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    .subtitle {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark-color);
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      resize: vertical;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: var(--transition);
+      min-height: 100px;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      transition: var(--transition);
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: var(--light-color);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--accent-color);
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .result-header {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+    
+    .result-section {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .result-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .empty-result {
+      font-style: italic;
+      color: #6c757d;
+    }
+    
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .comparison-table th {
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 576px) {
+      .container {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Unpaid Telephone Bills Finder</h1>
+      <p class="subtitle">Quickly find telephone numbers with unpaid bills</p>
+    </header>
+    
+    <div class="form-group">
+      <label for="bills">Enter Telephone Bills (comma-separated):</label>
+      <textarea id="bills" placeholder="e.g., 9876543210, 1234567890, 1122334455"></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label for="cheques">Enter Cheques (comma-separated):</label>
+      <textarea id="cheques" placeholder="e.g., 1234567890, 1122334455"></textarea>
+    </div>
+    
+    <button id="findBtn" class="btn" onclick="findUnpaid()">Find Unpaid Numbers</button>
+    
+    <div id="output" class="result">
+      <!-- Results will appear here -->
+    </div>
+  </div>
+
+  <script>
+    function parseInput(input) {
+      return input.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    }
+    
+    function bruteForceUnpaid(bills, cheques) {
+      const unpaid = [];
+      for (let i = 0; i < bills.length; i++) {
+        let paid = false;
+        for (let j = 0; j < cheques.length; j++) {
+          if (bills[i] === cheques[j]) {
+            paid = true;
+            break;
+          }
+        }
+        if (!paid) unpaid.push(bills[i]);
+      }
+      return unpaid;
+    }
+    
+    function sortedUnpaid(bills, cheques) {
+      bills.sort();
+      cheques.sort();
+      let unpaid = [];
+      let i = 0, j = 0;
+      while (i < bills.length && j < cheques.length) {
+        if (bills[i] === cheques[j]) {
+          i++;
+          j++;
+        } else if (bills[i] < cheques[j]) {
+          unpaid.push(bills[i]);
+          i++;
+        } else {
+          j++;
+        }
+      }
+      while (i < bills.length) {
+        unpaid.push(bills[i]);
+        i++;
+      }
+      return unpaid;
+    }
+    
+    function measureExecutionTime(func, ...args) {
+      // Run the function once to warm up (JIT compilation)
+      func(...args);
+      
+      // Multiple timing runs for more accuracy
+      const runs = 5;
+      const times = [];
+      
+      for (let i = 0; i < runs; i++) {
+        const start = performance.now();
+        const result = func(...args);
+        const end = performance.now();
+        times.push(end - start);
+      }
+      
+      // Calculate average execution time
+      const avgTime = times.reduce((sum, time) => sum + time, 0) / times.length;
+      
+      // Return the result from the last run and the average time
+      return {
+        result: func(...args),
+        time: avgTime
+      };
+    }
+    
+    function formatTime(ms) {
+      if (ms < 0.001) {
+        return `${(ms * 1000000).toFixed(2)} ns`;
+      } else if (ms < 1) {
+        return `${(ms * 1000).toFixed(2)} μs`;
+      } else if (ms < 1000) {
+        return `${ms.toFixed(3)} ms`;
+      } else {
+        return `${(ms / 1000).toFixed(3)} s`;
+      }
+    }
+    
+    function findUnpaid() {
+      const billsInput = document.getElementById('bills').value;
+      const chequesInput = document.getElementById('cheques').value;
+      const output = document.getElementById('output');
+      
+      const bills = parseInput(billsInput);
+      const cheques = parseInput(chequesInput);
+      
+      if (bills.length === 0 || cheques.length === 0) {
+        output.style.display = 'block';
+        output.innerHTML = '<div class="result-section"><div class="result-header">Error</div><p>Please enter valid bills and cheques.</p></div>';
+        return;
+      }
+      
+      // Use the measurement function
+      const bruteForceResults = measureExecutionTime(bruteForceUnpaid, bills, cheques);
+      const sortedResults = measureExecutionTime(sortedUnpaid, [...bills], [...cheques]);
+      
+      const unpaidBrute = bruteForceResults.result;
+      const unpaidSorted = sortedResults.result;
+      
+      const timeBrute = formatTime(bruteForceResults.time);
+      const timeSorted = formatTime(sortedResults.time);
+      
+      output.style.display = 'block';
+      
+      let bruteForceBadges = '';
+      if (unpaidBrute.length > 0) {
+        unpaidBrute.forEach(num => {
+          bruteForceBadges += `<span class="badge">${num}</span>`;
+        });
+      } else {
+        bruteForceBadges = '<span class="empty-result">None</span>';
+      }
+      
+      let sortedBadges = '';
+      if (unpaidSorted.length > 0) {
+        unpaidSorted.forEach(num => {
+          sortedBadges += `<span class="badge">${num}</span>`;
+        });
+      } else {
+        sortedBadges = '<span class="empty-result">None</span>';
+      }
+      
+      output.innerHTML = `
+        <div class="result-section">
+          <div class="result-header">Brute-force Method Results</div>
+          <p>Unpaid Numbers: ${bruteForceBadges}</p>
+          <p><small>Execution time: ${timeBrute}</small></p>
+        </div>
+        
+        <div class="result-section">
+          <div class="result-header">Presorting Method Results</div>
+          <p>Unpaid Numbers: ${sortedBadges}</p>
+          <p><small>Execution time: ${timeSorted}</small></p>
+        </div>
+        
+        <div class="result-section">
+          <div class="result-header">Efficiency Comparison</div>
+          <table class="comparison-table">
+            <tr>
+              <th>Method</th>
+              <th>Time Complexity</th>
+              <th>Best For</th>
+            </tr>
+            <tr>
+              <td>Brute-force</td>
+              <td>O(n × m)</td>
+              <td>Small datasets</td>
+            </tr>
+            <tr>
+              <td>Presorting</td>
+              <td>O(n log n + m log m)</td>
+              <td>Large datasets</td>
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
